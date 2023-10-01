@@ -1,10 +1,35 @@
 class Alumnos {
     constructor() {
         this.lista = []
+        this.cargarAlumnosJSON()
+        
+        this.lista = this.cargarDesdeLocalStorage()
     }
     agregarAlumno(nombre) {
         this.lista.push(nombre)
-        localStorage.setItem("alumnos", JSON.stringify(this.lista))
+        this.actualizarJSON()
+        
+        this.actualizarLocalStorage()
+    }
+    cargarAlumnosJSON() {
+        fetch('alumnosAPI.json')
+            .then((response) => {
+                return response.json()
+            })
+            .then((data) => {
+                this.lista = data
+            })
+    }
+
+    actualizarJSON() {
+    }
+    
+    cargarDesdeLocalStorage() {
+        const listaGuardada = localStorage.getItem('alumnos')
+        return listaGuardada ? JSON.parse(listaGuardada) : null
+    }
+    actualizarLocalStorage() {
+        localStorage.setItem('alumnos', JSON.stringify(this.lista))
     }
     calcularPromedio(nombre, nota1, nota2, nota3) {
         const promedio = (nota1 + nota2 + nota3) / 3
@@ -15,8 +40,10 @@ class Alumnos {
     }
     obtenerLista() {
         return this.lista
+
     }
 }
+
 const alumnos = new Alumnos()
 
 const btn_nuevo = document.getElementById("btn_nuevo")
@@ -73,4 +100,4 @@ const btn_alumnos = document.getElementById("btn_alumnos")
 btn_alumnos.addEventListener("click", () => {
     const listaAlumnos = alumnos.obtenerLista().join(". \n")
     Swal.fire(listaAlumnos)
-})  
+})
